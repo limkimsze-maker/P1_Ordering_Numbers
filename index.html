@@ -30,12 +30,12 @@
       --baseH: 720;
 
       /* teacher-controlled (but auto-clamped to FIT) */
-      --tenW: 12px;
-      --tenH: 64px; /* auto-set in JS */
+      --tenW: 9px;
+      --tenH: 47px; /* auto-set in JS */
       --oneS: 16px;
 
       /* layout gaps used in fit math */
-      --gap: 6px;
+      --gap: 5px;
     }
 
     *{box-sizing:border-box}
@@ -54,12 +54,13 @@
     .viewport{
       position:fixed; inset:0;
       display:flex; align-items:center; justify-content:center;
-      padding: 10px;
+      padding: clamp(6px, 1.8vw, 14px);
+      overflow:hidden;
     }
     .stage{
       width: calc(var(--baseW) * 1px);
       height: calc(var(--baseH) * 1px);
-      transform-origin: top left;
+      transform-origin: center center;
       background:#fff;
       border-radius: 18px;
       position:relative;
@@ -167,22 +168,23 @@
       min-height: 0;
       display:grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       align-items:stretch;
-      padding: 6px 6px 6px;
+      padding: 8px 8px 14px;
     }
 
     /* base ten blocks go UP (top-anchored) */
     .tensArea, .onesArea{
       border-radius: 14px;
-      background:#fff;
       display:flex;
       align-items:flex-start;
       justify-content:flex-start;
-      padding: 6px 4px;
+      padding: 10px 6px 18px;
       min-height: 190px;
       overflow:hidden;
     }
+    .tensArea{ background:#eef8ff; }
+    .onesArea{ background:#fff6e8; }
 
     /* ✅ Ones: two columns (5 left, 4 right) to save space */
     .onesArea{
@@ -200,18 +202,21 @@
     }
 
     .tensArea{
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-content:flex-start;
-      gap: var(--gap);
+      display:grid;
+      grid-template-columns: repeat(5, var(--tenW));
+      grid-auto-rows: var(--tenH);
+      column-gap: var(--gap);
+      row-gap: calc(var(--gap) + 2px);
+      align-content:start;
       justify-content:center;
+      justify-items:center;
     }
 
     .rodSvg{
       width: var(--tenW);
       height: var(--tenH);
       display:block;
-      filter: drop-shadow(0 8px 12px rgba(2,6,23,.10));
+      filter: drop-shadow(0 4px 6px rgba(2,6,23,.08));
       user-select:none;
     }
     .cubeSvg{
@@ -229,19 +234,20 @@
       background:#fff;
       display:grid;
       grid-template-columns: 1fr 1fr;
-      margin-top: 2px;
+      margin-top: 10px;
+      flex: 0 0 auto;
     }
     .pvCell{
-      padding: 8px 8px 8px;
+      padding: 7px 8px 7px;
       display:flex;
       flex-direction:column;
-      gap: 6px;
+      gap: 5px;
       align-items:center;
       justify-content:center;
-      min-height: 84px;
+      min-height: 76px;
     }
-    .pvCell.tens{ background: linear-gradient(180deg, #ffd08a 0%, var(--cardA) 100%); }
-    .pvCell.ones{ background: linear-gradient(180deg, #9bdcff 0%, var(--cardB) 100%); }
+    .pvCell.tens{ background: linear-gradient(180deg, #a7dcff 0%, #e0f2fe 100%); }
+    .pvCell.ones{ background: linear-gradient(180deg, #ffd88f 0%, #ffedd5 100%); }
 
     .pvLabel{
       font-weight: 900;
@@ -502,7 +508,9 @@
       font-weight: 800;
       outline:none;
       background:#fff;
+      letter-spacing: 2px;
     }
+    .setNum::-ms-reveal, .setNum::-ms-clear{ display:none; }
 
     .toggleRow{
       display:flex;
@@ -554,6 +562,32 @@
       background:#fff;
       white-space:nowrap;
     }
+
+
+    /* Celebration shown on final success */
+    .celebrationLayer{
+      position:fixed;
+      inset:0;
+      overflow:hidden;
+      pointer-events:none;
+      z-index:55;
+    }
+    .confettiPiece{
+      position:absolute;
+      top:-32px;
+      width:12px;
+      height:18px;
+      border-radius:4px;
+      opacity:.96;
+      transform:translate3d(0,-40px,0) rotate(0deg);
+      animation: confettiFall var(--dur, 2s) cubic-bezier(.16,.9,.38,1) forwards;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes confettiFall{
+      0%{ transform:translate3d(0,-40px,0) rotate(0deg); opacity:1; }
+      100%{ transform:translate3d(var(--dx, 0px), calc(100vh + 90px), 0) rotate(var(--rot, 720deg)); opacity:.88; }
+    }
+
   </style>
 </head>
 
@@ -562,9 +596,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56.5 64" aria-hidden="true" focusable="false">
       <defs>
         <style>
-          .cls-1 { fill: #f7b12b; }
-          .cls-2 { fill: #c97e00; }
-          .cls-3 { fill: #e48f00; }
+          .cls-1 { fill: #ffb347; }
+          .cls-2 { fill: #d97706; }
+          .cls-3 { fill: #f59e0b; }
           .cls-4 { fill: #fff; }
         </style>
       </defs>
@@ -579,9 +613,9 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 39.18 206" aria-hidden="true" focusable="false">
       <defs>
         <style>
-          .cls-1 { fill: #30a5ff; }
-          .cls-2 { fill: #1f66cc; }
-          .cls-3 { fill: #1b8eea; }
+          .cls-1 { fill: #38bdf8; }
+          .cls-2 { fill: #2563eb; }
+          .cls-3 { fill: #0ea5e9; }
           .cls-4 { fill: #fff; }
         </style>
       </defs>
@@ -741,9 +775,9 @@
       <div class="field">
         <label>Set the three numbers (1–99)</label>
         <div class="numRow">
-          <input class="setNum" id="set0" type="number" min="1" max="99" step="1" value="63">
-          <input class="setNum" id="set1" type="number" min="1" max="99" step="1" value="74">
-          <input class="setNum" id="set2" type="number" min="1" max="99" step="1" value="47">
+          <input class="setNum" id="set0" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="63" aria-label="First number" autocomplete="off">
+          <input class="setNum" id="set1" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="74" aria-label="Second number" autocomplete="off">
+          <input class="setNum" id="set2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="2" value="47" aria-label="Third number" autocomplete="off">
           <button class="btn" id="applyBtn">Apply</button>
           <button class="btn" id="randomBtn">Random</button>
         </div>
@@ -774,10 +808,10 @@
         <label>Block sizes (auto-fit clamps to keep ALL blocks inside)</label>
 
         <div class="sliderRow">
-          <input id="tenWRange" type="range" min="8" max="22" step="1" value="12">
-          <span class="pill">Tens width: <span id="tenWVal">12</span>px</span>
+          <input id="tenWRange" type="range" min="7" max="16" step="1" value="9">
+          <span class="pill">Tens width: <span id="tenWVal">9</span>px</span>
         </div>
-        <div class="help">If too big to fit 9 tens, the app will auto-reduce.</div>
+        <div class="help">If too big to fit 5 rods on top and the rest below, the app will auto-reduce.</div>
 
         <div class="sliderRow" style="margin-top:10px">
           <input id="oneSRange" type="range" min="12" max="26" step="1" value="16">
@@ -805,15 +839,15 @@
     const GAP = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--gap')) || 6;
 
     function fitStage(){
-      const pad = 20;
-      const vw = Math.max(320, window.innerWidth - pad);
-      const vh = Math.max(320, window.innerHeight - pad);
+      const pad = Math.max(12, Math.min(28, window.innerWidth * 0.025));
+      const vw = Math.max(260, window.innerWidth - pad);
+      const vh = Math.max(260, window.innerHeight - pad);
 
       const drawerOpen = document.body.classList.contains('drawer-open');
       const dw = drawerOpen ? drawer.getBoundingClientRect().width : 0;
-      const availW = Math.max(320, vw - dw);
+      const availW = Math.max(260, vw - dw);
 
-      const s = Math.min(availW / BASE_W, vh / BASE_H);
+      const s = Math.min(availW / BASE_W, vh / BASE_H, 1);
       stage.style.transform = `scale(${s})`;
     }
 
@@ -944,7 +978,7 @@
     }
 
     /* ✅ Auto-fit clamps
-       - Tens: 9 rods wrap; conservative clamp by width + height
+       - Tens: fixed 5 columns, up to 2 rows (5 on top, remaining below)
        - Ones: 2 columns (5 left, 4 right): width ~ 2*oneS + GAP; height ~ 5*oneS + 4*GAP
     */
     function autoFitClampSizes(){
@@ -958,9 +992,10 @@
       const availTW = Math.max(1, minTensW - padW);
       const availTH = Math.max(1, minTensH - padH);
 
-      const maxTenW_byWidth = Math.floor((availTW - 8*GAP) / 9);
-      const maxTenW_byHeight = Math.floor(availTH / TEN_ASPECT);
-      let maxTenW = Math.max(8, Math.min(22, maxTenW_byWidth, maxTenW_byHeight));
+      const safeBottomSpace = 32;
+      const maxTenW_byWidth = Math.floor((availTW - 4*GAP) / 5);
+      const maxTenW_byHeight = Math.floor((availTH - safeBottomSpace - GAP) / (2 * TEN_ASPECT));
+      let maxTenW = Math.max(7, Math.min(16, maxTenW_byWidth, maxTenW_byHeight));
 
       const availOW = Math.max(1, minOnesW - padW);
       const availOH = Math.max(1, minOnesH - padH);
@@ -969,7 +1004,7 @@
       const maxOneS_byHeight = Math.floor((availOH - 4*GAP) / 5);
       let maxOneS = Math.max(12, Math.min(26, maxOneS_byWidth, maxOneS_byHeight));
 
-      const t = Math.max(8, Math.min(22, Number(tenWRange.value)));
+      const t = Math.max(7, Math.min(16, Number(tenWRange.value)));
       const o = Math.max(12, Math.min(26, Number(oneSRange.value)));
 
       if (t > maxTenW) tenWRange.value = String(maxTenW);
@@ -979,7 +1014,7 @@
     function applySizes(skipClamp=false){
       if (!skipClamp) autoFitClampSizes();
 
-      const tenW = Math.max(8, Math.min(22, Number(tenWRange.value)));
+      const tenW = Math.max(7, Math.min(16, Number(tenWRange.value)));
       const oneS = Math.max(12, Math.min(26, Number(oneSRange.value)));
       const tenH = Math.round(tenW * TEN_ASPECT);
 
@@ -1066,6 +1101,91 @@
           pvInputs[i].o = setPVBox(pvO[i], 'edit', '');
         }
       }
+    }
+
+    let celebrationLayer = null;
+    let clapAudioCtx = null;
+
+    function getCelebrationLayer(){
+      if (!celebrationLayer){
+        celebrationLayer = document.createElement('div');
+        celebrationLayer.className = 'celebrationLayer';
+        celebrationLayer.setAttribute('aria-hidden','true');
+        document.body.appendChild(celebrationLayer);
+      }
+      return celebrationLayer;
+    }
+
+    function playClapSound(){
+      try{
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+        clapAudioCtx = clapAudioCtx || new AudioCtx();
+        const ctx = clapAudioCtx;
+        if (ctx.state === 'suspended') ctx.resume();
+
+        const makeClap = (offset, gainLevel) => {
+          const now = ctx.currentTime + offset;
+          const length = Math.floor(ctx.sampleRate * 0.055);
+          const buffer = ctx.createBuffer(1, length, ctx.sampleRate);
+          const data = buffer.getChannelData(0);
+          for (let i=0; i<length; i++){
+            const decay = 1 - (i / length);
+            data[i] = (Math.random() * 2 - 1) * decay * decay;
+          }
+
+          const noise = ctx.createBufferSource();
+          noise.buffer = buffer;
+
+          const band = ctx.createBiquadFilter();
+          band.type = 'bandpass';
+          band.frequency.value = 1200 + Math.random() * 850;
+          band.Q.value = 0.8;
+
+          const gain = ctx.createGain();
+          gain.gain.setValueAtTime(0.0001, now);
+          gain.gain.exponentialRampToValueAtTime(gainLevel, now + 0.006);
+          gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
+
+          noise.connect(band);
+          band.connect(gain);
+          gain.connect(ctx.destination);
+          noise.start(now);
+          noise.stop(now + 0.1);
+        };
+
+        [0, .045, .095, .16, .23, .31].forEach((offset, i)=> makeClap(offset, i < 2 ? .35 : .24));
+      } catch(err){
+        // Silent fail keeps the activity working even if audio is blocked.
+      }
+    }
+
+    function burstConfetti(){
+      const layer = getCelebrationLayer();
+      layer.innerHTML = '';
+      const colours = ['#ef4444','#f97316','#facc15','#22c55e','#06b6d4','#3b82f6','#a855f7','#ec4899'];
+      const pieces = 130;
+
+      for (let i=0; i<pieces; i++){
+        const piece = document.createElement('div');
+        piece.className = 'confettiPiece';
+        piece.style.left = (Math.random() * 100) + 'vw';
+        piece.style.background = colours[i % colours.length];
+        piece.style.setProperty('--dx', ((Math.random() * 260) - 130) + 'px');
+        piece.style.setProperty('--rot', ((Math.random() * 900) + 360) + 'deg');
+        piece.style.setProperty('--dur', (1.65 + Math.random() * .95) + 's');
+        piece.style.setProperty('--delay', (Math.random() * .22) + 's');
+        if (i % 3 === 0) piece.style.borderRadius = '999px';
+        if (i % 4 === 0) piece.style.width = '8px';
+        layer.appendChild(piece);
+      }
+
+      window.setTimeout(()=>{ layer.innerHTML = ''; }, 3200);
+    }
+
+    function celebrateCorrect(){
+      playClapSound();
+      burstConfetti();
     }
 
     // ----- ordering -----
@@ -1290,9 +1410,17 @@
       }
 
       msg.textContent = orderOk ? '✅ Well done!' : 'Try again. Check the order in (c).';
+      if (orderOk) celebrateCorrect();
     }
 
     [greatestInp, smallestInp].forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const cleaned = sanitizeDigits(inp.value, 2);
+        if (inp.value !== cleaned) inp.value = cleaned;
+      });
+    });
+
+    [set0, set1, set2].forEach(inp=>{
       inp.addEventListener('input', ()=>{
         const cleaned = sanitizeDigits(inp.value, 2);
         if (inp.value !== cleaned) inp.value = cleaned;
